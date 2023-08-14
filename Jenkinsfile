@@ -104,7 +104,7 @@ pipeline {
                     def remoteScript = '''
                         #!/bin/bash
                         cd /var/www/html/vue-app-latest
-                        echo "hello"
+                        echo "hello" > hello.txt
                         
                     '''
                     sshPublisher(
