@@ -104,13 +104,13 @@ pipeline {
                     def remoteScript = '''
                         #!/bin/bash
                         cd /var/www/html/vue-app-latest
-                        echo "hello" >text.txt 2>&1
+                        echo "hello"
                         
                     '''
                     sshPublisher(
                         continueOnError: true,
                         failOnError: true,
-                        verbose: true,
+                        // verbose: true,
                         publishers: [sshPublisherDesc(configName: 'demo-server', transfers: [sshTransfer(execCommand: remoteScript)])]
                     )
                 }
