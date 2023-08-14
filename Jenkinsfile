@@ -88,6 +88,37 @@
 // }
 
 
+// pipeline {
+//     agent any
+
+//     stages {
+//         stage('Checkout') {
+//             steps {
+//                 checkout scm
+//             }
+//         }
+        
+//         stage('Build and Deploy') {
+//             steps {
+//                 script {
+//                     def remoteScript = '''
+//                         #!/bin/bash
+//                         cd /var/www/html/vue-app-latest
+//                         echo "hello" >text.txt 2>&1
+                        
+//                     '''
+//                     sshPublisher(
+//                         continueOnError: true,
+//                         failOnError: true,
+//                         verbose: true,
+//                         publishers: [sshPublisherDesc(configName: 'demo-server', transfers: [sshTransfer(execCommand: remoteScript)])]
+//                     )
+//                 }
+//             }
+//         }
+//     }
+// }
+
 pipeline {
     agent any
 
@@ -97,21 +128,35 @@ pipeline {
                 checkout scm
             }
         }
-        
+
         stage('Build and Deploy') {
             steps {
                 script {
                     def remoteScript = '''
                         #!/bin/bash
                         cd /var/www/html/vue-app-latest
-                        echo "hello" >text.txt 2>&1
-                        
+                        echo "hello" > text.txt 2>&1
                     '''
-                    sshPublisher(
-                        continueOnError: true,
-                        failOnError: true,
-                        verbose: true,
-                        publishers: [sshPublisherDesc(configName: 'demo-server', transfers: [sshTransfer(execCommand: remoteScript)])]
+
+                    def remoteHost = '20.198.98.206'
+                    def remoteUser = 'azureuser'
+                    def remotePort = '22'  // Default SSH port
+
+                    publishOverSSH(
+                        target: [
+                            allowAnyHosts: true,
+                            alwaysTransfer: true,
+                            host: remoteHost,
+                            port: remotePort,
+                            remoteDir: '/home/azureuser',
+                            user: remoteUser
+                        ],
+                        transfers: [
+                            sshTransfer(
+                                execCommand: remoteScript,
+                                printExecOutput: true
+                            )
+                        ]
                     )
                 }
             }
